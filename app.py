@@ -1,6 +1,6 @@
 import streamlit as st
 from pypdf import PdfReader
-from google import genai
+import google.generativeai as genai
 
 st.set_page_config(page_title="DekatSehat - Tanya Promkes", page_icon="🩺", layout="centered")
 
@@ -14,8 +14,9 @@ if not api_key:
     st.error("API Key belum dikonfigurasi di Settings Streamlit!")
     st.stop()
 
-# Inisialisasi Google GenAI client
-client = genai.Client(api_key=api_key)
+# Konfigurasi Gemini API
+genai.configure(api_key=api_key)
+model = genai.GenerativeModel("gemini-1.5-flash")
 
 # 2. Ekstraksi teks dari file materi leaflet
 @st.cache_resource
@@ -33,56 +34,47 @@ def load_health_context():
 
 context_text = load_health_context()
 
-# 3. Riwayat Percakapan
-if "messages" not in st.session_state:
-    st.session_state.messages = [
-        {
-            "role": "assistant", 
-            "content": "Halo! Saya asisten edukasi kesehatan DekatSehat. Ada yang ingin Anda tanyakan seputar materi kesehatan atau pencegahan penyakit?"
-        }
-    ]
+# Pesan sambutan
+welcome_message = (
+    "Halo! Saya asisten edukasi kesehatan DekatSehat. "
+    "Ada yang ingin Anda tanyakan seputar materi kesehatan atau pencegahan penyakit?"
+)
 
+# 3. Inisialisasi riwayat chat
+if "messages" not in st.session_state:
+    st.session_state.messages = [{"role": "assistant", "content": welcome_message}]
+
+# Tampilkan riwayat chat
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
-# 4. Input dan Respon Chatbot
+# 4. Input pengguna
 if user_prompt := st.chat_input("Ketik pertanyaan kesehatan Anda di sini..."):
+    # Tampilkan chat pengguna
     st.session_state.messages.append({"role": "user", "content": user_prompt})
     with st.chat_message("user"):
         st.markdown(user_prompt)
 
-    # Instruksi sistem untuk asisten promosi kesehatan
+    # Buat respon edukatif
     system_instruction = f"""
-    Anda adalah asisten promosi kesehatan (Promkes) bernama DekatSehat.
-    Tugas utama Anda: Memberikan informasi dan edukasi kesehatan dengan bahasa ramah, santun, jelas, dan mudah dipahami oleh masyarakat umum.
-
-    Rujukan materi resmi:
-    \"\"\"{context_text}\"\"\"
-
-    Aturan ketat:
-    1. Utamakan menjawab berdasarkan fakta yang tercantum pada rujukan materi resmi di atas.
-    2. Jelaskan konsep medis dengan bahasa awam dan analogi sederhana.
-    3. Jika pengguna menanyakan hal medis di luar materi rujukan atau memerlukan tindakan medis/obat khusus, ingatkan dengan ramah untuk berkonsultasi langsung ke dokter atau fasilitas kesehatan terdekat (Puskesmas/Rumah Sakit).
-    4. Anda BUKAN pengganti dokter. Jangan memberikan diagnosis pasti atau meresepkan dosis obat klinis.
+    Anda adalah asisten edukasi promosi kesehatan (Promkes) bernama DekatSehat.
+    Gunakan konteks materi resmi berikut sebagai referensi utama:
+    ---
+    {context_text}
+    ---
+    Jawab dengan bahasa Indonesia yang ramah, sopan, mudah dipahami masyarakat awam, dan edukatif.
+    Jika topik medis bersifat darurat atau butuh diagnosis langsung, selalu sarankan konsultasi langsung dengan dokter/tenaga medis di RSUD.
     """
+
+    prompt_with_context = f"{system_instruction}\n\nPertanyaan masyarakat: {user_prompt}"
 
     with st.chat_message("assistant"):
         with st.spinner("Sedang mencari materi edukasi..."):
             try:
-                contents = []
-                for m in st.session_state.messages:
-                    role = "user" if m["role"] == "user" else "model"
-                    contents.append(f"{role}: {m['content']}")
-                
-                full_prompt = f"{system_instruction}\n\nPercakapan sejauh ini:\n" + "\n".join(contents)
-
-                response = client.models.generate_content(
-                    model="gemini-2.5-flash",
-                    contents=full_prompt,
-                )
-                answer = response.text
-                st.markdown(answer)
-                st.session_state.messages.append({"role": "assistant", "content": answer})
-            except Exception as err:
-                st.error(f"Terjadi kendala saat memproses: {err}")
+                response = model.generate_content(prompt_with_context)
+                bot_reply = response.text
+                st.markdown(bot_reply)
+                st.session_state.messages.append({"role": "assistant", "content": bot_reply})
+            except Exception as e:
+                st.error(f"Terjadi kendala saat memproses: {e}")
