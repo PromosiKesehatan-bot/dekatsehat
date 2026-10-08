@@ -1,6 +1,6 @@
 import streamlit as st
 from pypdf import PdfReader
-import google.generativeai as genai
+from google import genai
 
 st.set_page_config(page_title="DekatSehat - Tanya Promkes", page_icon="🩺", layout="centered")
 
@@ -14,9 +14,8 @@ if not api_key:
     st.error("API Key belum dikonfigurasi di Settings Streamlit!")
     st.stop()
 
-# Konfigurasi Gemini API
-genai.configure(api_key=api_key)
-model = genai.GenerativeModel("gemini-1.5-flash")
+# Inisialisasi Google GenAI client (mendukung key format AQ...)
+client = genai.Client(api_key=api_key)
 
 # 2. Ekstraksi teks dari file materi leaflet
 @st.cache_resource
@@ -34,7 +33,6 @@ def load_health_context():
 
 context_text = load_health_context()
 
-# Pesan sambutan
 welcome_message = (
     "Halo! Saya asisten edukasi kesehatan DekatSehat. "
     "Ada yang ingin Anda tanyakan seputar materi kesehatan atau pencegahan penyakit?"
@@ -49,14 +47,12 @@ for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
-# 4. Input pengguna
+# 4. Input pertanyaan pengguna
 if user_prompt := st.chat_input("Ketik pertanyaan kesehatan Anda di sini..."):
-    # Tampilkan chat pengguna
     st.session_state.messages.append({"role": "user", "content": user_prompt})
     with st.chat_message("user"):
         st.markdown(user_prompt)
 
-    # Buat respon edukatif
     system_instruction = f"""
     Anda adalah asisten edukasi promosi kesehatan (Promkes) bernama DekatSehat.
     Gunakan konteks materi resmi berikut sebagai referensi utama:
@@ -72,7 +68,10 @@ if user_prompt := st.chat_input("Ketik pertanyaan kesehatan Anda di sini..."):
     with st.chat_message("assistant"):
         with st.spinner("Sedang mencari materi edukasi..."):
             try:
-                response = model.generate_content(prompt_with_context)
+                response = client.models.generate_content(
+                    model="gemini-2.5-flash",
+                    contents=prompt_with_context,
+                )
                 bot_reply = response.text
                 st.markdown(bot_reply)
                 st.session_state.messages.append({"role": "assistant", "content": bot_reply})
