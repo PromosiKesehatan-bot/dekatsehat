@@ -1,6 +1,7 @@
 import streamlit as st
 from pypdf import PdfReader
 from google import genai
+from google.genai import types
 
 st.set_page_config(page_title="DekatSehat - Tanya Promkes", page_icon="🩺", layout="centered")
 
@@ -14,10 +15,15 @@ if not api_key:
     st.error("API Key belum dikonfigurasi di Settings Streamlit!")
     st.stop()
 
-# Inisialisasi Google GenAI client (mendukung key format AQ...)
-client = genai.Client(api_key=api_key)
+# 2. Inisialisasi klien dengan konfigurasi Google Cloud Key
+client = genai.Client(
+    api_key=api_key,
+    http_options=types.HttpOptions(
+        headers={"X-Goog-Api-Key": api_key}
+    )
+)
 
-# 2. Ekstraksi teks dari file materi leaflet
+# 3. Ekstraksi teks dari file materi leaflet
 @st.cache_resource
 def load_health_context():
     try:
@@ -38,7 +44,7 @@ welcome_message = (
     "Ada yang ingin Anda tanyakan seputar materi kesehatan atau pencegahan penyakit?"
 )
 
-# 3. Inisialisasi riwayat chat
+# 4. Inisialisasi riwayat chat
 if "messages" not in st.session_state:
     st.session_state.messages = [{"role": "assistant", "content": welcome_message}]
 
@@ -47,7 +53,7 @@ for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
-# 4. Input pertanyaan pengguna
+# 5. Input pertanyaan pengguna
 if user_prompt := st.chat_input("Ketik pertanyaan kesehatan Anda di sini..."):
     st.session_state.messages.append({"role": "user", "content": user_prompt})
     with st.chat_message("user"):
