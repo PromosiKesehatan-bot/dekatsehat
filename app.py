@@ -1,16 +1,13 @@
 import streamlit as st
+import streamlit.components.v1 as components
 from google import genai
-from google.genai import types
-from audio_recorder_streamlit import audio_recorder
 from gtts import gTTS
 import PyPDF2
 import os
 import io
-import time
 
 st.set_page_config(page_title="SAE RSUD Kota Bandung", page_icon="🩺", layout="centered")
 
-# Inisialisasi Gemini Client
 client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
 
 @st.cache_resource
@@ -18,7 +15,7 @@ def load_context_data():
     txt_data = ""
     pdf_data = ""
     
-    # 1. Baca berkas TXT (jadwal poliklinik resmi)
+    # 1. Baca berkas TXT (jadwal poliklinik)
     for f in os.listdir("."):
         if f.endswith(".txt") and f != "requirements.txt":
             try:
@@ -68,46 +65,81 @@ if "messages" not in st.session_state:
         }
     ]
 
-# Tampilkan riwayat chat
+# Tampilkan riwayat percakapan
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.write(msg["content"])
         if msg.get("audio"):
             st.audio(msg["audio"], format="audio/mp3")
 
-# Area tombol rekam suara
-st.markdown("---")
-col_mic, col_desc = st.columns([1, 5])
-with col_mic:
-    audio_bytes = audio_recorder(
-        text="",
-        recording_color="#e02424",
-        neutral_color="#1f2937",
-        icon_name="microphone",
-        icon_size="2x"
-    )
-with col_desc:
-    st.caption("🎙️ Ketuk ikon mikrofon untuk bicara, lalu ketuk lagi untuk berhenti & mengirim.")
+# Komponen Mikrofon Otomatis (Web Speech API)
+voice_component = """
+<div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+    <button id="micBtn" style="background:#e02424; color:white; border:none; border-radius:50px; padding:10px 18px; font-size:14px; cursor:pointer; font-weight:bold; display:flex; align-items:center; gap:6px;">
+        🎤 Bicara Sekarang
+    </button>
+    <span id="micStatus" style="color:#aaa; font-size:13px;">Ketuk tombol untuk berbicara</span>
+</div>
 
-text_input = st.chat_input("Atau ketik pertanyaan kesehatan/poliklinik di sini...")
+<script>
+const btn = document.getElementById('micBtn');
+const status = document.getElementById('micStatus');
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-prompt_final = None
-audio_payload = None
+if (SpeechRecognition) {
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'id-ID';
+    recognition.interimResults = false;
 
-if audio_bytes:
-    if "last_recorded_audio" not in st.session_state or st.session_state.last_recorded_audio != audio_bytes:
-        st.session_state.last_recorded_audio = audio_bytes
-        audio_payload = audio_bytes
-elif text_input:
-    prompt_final = text_input
+    btn.onclick = () => {
+        try {
+            recognition.start();
+            status.innerText = "Mendengarkan suara Anda...";
+            btn.style.background = "#16a34a";
+        } catch (e) {
+            recognition.stop();
+        }
+    };
 
-if prompt_final or audio_payload:
-    user_display = prompt_final if prompt_final else "🎤 [Pertanyaan Suara]"
-    st.session_state.messages.append({"role": "user", "content": user_display, "audio": audio_payload})
+    recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        status.innerText = "Terkirim: " + transcript;
+        btn.style.background = "#e02424";
+        
+        // Kirim hasil suara langsung ke input chat streamlit
+        const inputs = window.parent.document.querySelectorAll('textarea[data-testid="stChatInputTextArea"]');
+        if (inputs.length > 0) {
+            const el = inputs[0];
+            el.value = transcript;
+            el.dispatchEvent(new Event('input', { bubbles: true }));
+            setTimeout(() => {
+                const sendBtn = window.parent.document.querySelector('button[data-testid="stChatInputSubmitButton"]');
+                if (sendBtn) sendBtn.click();
+            }, 300);
+        }
+    };
+
+    recognition.onerror = () => {
+        status.innerText = "Gagal merekam. Pastikan izin mikrofon aktif.";
+        btn.style.background = "#e02424";
+    };
+
+    recognition.onend = () => {
+        btn.style.background = "#e02424";
+    };
+} else {
+    status.innerText = "Browser tidak mendukung rekaman langsung.";
+}
+</script>
+"""
+components.html(voice_component, height=55)
+
+prompt = st.chat_input("Atau ketik pertanyaan kesehatan/poliklinik di sini...")
+
+if prompt:
+    st.session_state.messages.append({"role": "user", "content": prompt, "audio": None})
     with st.chat_message("user"):
-        st.write(user_display)
-        if audio_payload:
-            st.audio(audio_payload, format="audio/wav")
+        st.write(prompt)
 
     system_instruction = f"""
 Anda adalah 'SAE' (Suara, Aksara Edukasi), asisten AI resmi RSUD Kota Bandung.
@@ -120,35 +152,19 @@ Berikut DATABASE RESMI JADWAL & MATERI KESEHATAN RSUD KOTA BANDUNG:
 ATURAN MENJAWAB:
 1. Pahami sinonim kata (contoh: syaraf = saraf = neurologi, obgyn = kandungan, anak = pediatri, jiwa = psikiatri).
 2. Jika pengguna menanyakan jadwal poli atau dokter, carilah di database di atas. WAJIB sebutkan nama klinik, nama dokter, serta hari dan jam praktiknya secara rinci.
-3. Jawab dengan bahasa Indonesia yang ramah, sopan, dan ringkas agar nyaman didengar saat dibacakan suara audio.
+3. Jawab dengan bahasa Indonesia yang ramah, santun, dan ringkas agar nyaman didengarkan via audio.
 """
 
     with st.chat_message("assistant"):
         with st.spinner("SAE sedang memproses tanggapan..."):
-            jawaban = None
-            for _ in range(3):
-                try:
-                    if audio_payload:
-                        audio_part = types.Part.from_bytes(
-                            data=audio_payload,
-                            mime_type="audio/wav"
-                        )
-                        prompt_text = f"{system_instruction}\n\nDengarkan rekaman audio ini, pahami pertanyaannya, lalu jawab sesuai panduan database RSUD Kota Bandung di atas:"
-                        contents_input = [prompt_text, audio_part]
-                    else:
-                        contents_input = f"{system_instruction}\n\nPertanyaan: {prompt_final}"
-
-                    response = client.models.generate_content(
-                        model="gemini-3.8-flash",
-                        contents=contents_input
-                    )
-                    jawaban = response.text
-                    break
-                except Exception:
-                    time.sleep(2)
-
-            if jawaban:
+            try:
+                response = client.models.generate_content(
+                    model="gemini-3.8-flash",
+                    contents=f"{system_instruction}\n\nPertanyaan: {prompt}"
+                )
+                jawaban = response.text
                 st.write(jawaban)
+
                 audio_stream = teks_ke_suara(jawaban)
                 st.audio(audio_stream, format="audio/mp3", autoplay=True)
 
@@ -157,5 +173,5 @@ ATURAN MENJAWAB:
                     "content": jawaban,
                     "audio": audio_stream
                 })
-            else:
-                st.error("Server sedang padat atau jaringan terganggu. Silakan ketuk mikrofon dan coba rekam kembali ya.")
+            except Exception as e:
+                st.error(f"Terjadi kendala: {e}")
