@@ -45,7 +45,8 @@ if prompt := st.chat_input("Ketik pertanyaan kesehatan Anda di sini..."):
     with st.chat_message("user"):
         st.write(prompt)
 
-system_instruction = f"""
+
+    system_instruction = f"""
 Anda adalah 'DekatSehat', asisten virtual resmi Promosi Kesehatan RSUD Kota Bandung yang ramah, edukatif, empatik, dan mudah dipahami masyarakat.
 
 Gunakan referensi materi promkes berikut untuk memperkaya jawaban Anda:
@@ -55,7 +56,7 @@ Instruksi:
 - Jawab secara edukatif, empatik, dan terstruktur dengan identitas Promosi Kesehatan RSUD Kota Bandung.
 - Sertakan pesan pencegahan yang aplikatif untuk masyarakat.
 - Di akhir jawaban atau jika relevan, berikan anjuran kepada warga untuk memeriksakan kesehatan secara berkala atau berkonsultasi langsung ke RSUD Kota Bandung bila memerlukan pemeriksaan lebih lanjut.
-"""
+    """
 
     with st.chat_message("assistant"):
         with st.spinner("Sedang memproses..."):
