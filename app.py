@@ -1,5 +1,6 @@
 import streamlit as st
 from google import genai
+from google.genai import types
 from audio_recorder_streamlit import audio_recorder
 from gtts import gTTS
 import PyPDF2
@@ -8,6 +9,7 @@ import io
 
 st.set_page_config(page_title="SAE RSUD Kota Bandung", page_icon="🩺", layout="centered")
 
+# Inisialisasi Gemini Client
 client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
 
 @st.cache_resource
@@ -15,7 +17,7 @@ def load_context_data():
     txt_data = ""
     pdf_data = ""
     
-    # 1. BACA FILE TXT (Prioritas Utama Jadwal)
+    # 1. Baca berkas TXT (jadwal poliklinik resmi)
     for f in os.listdir("."):
         if f.endswith(".txt") and f != "requirements.txt":
             try:
@@ -24,13 +26,13 @@ def load_context_data():
             except Exception:
                 continue
 
-    # 2. BACA FILE PDF (Materi Promkes)
+    # 2. Baca berkas PDF (materi edukasi promkes)
     for f in os.listdir("."):
         if f.endswith(".pdf"):
             try:
                 with open(f, "rb") as file:
                     reader = PyPDF2.PdfReader(file)
-                    for page in reader.pages[:15]:
+                    for page in reader.pages[:20]:
                         extracted = page.extract_text()
                         if extracted:
                             pdf_data += extracted + "\n"
@@ -60,22 +62,22 @@ if "messages" not in st.session_state:
     st.session_state.messages = [
         {
             "role": "assistant",
-            "content": "Halo! Sampurasun! Saya SAE (Suara, Aksara Edukasi), asisten virtual resmi Instalasi Promosi Kesehatan RSUD Kota Bandung. Ada yang ingin Anda tanyakan seputar materi kesehatan atau informasi poliklinik?",
+            "content": "Halo! Sampurasun! Saya SAE (Suara, Aksara Edukasi), asisten virtual resmi Promosi Kesehatan RSUD Kota Bandung. Ada yang ingin Anda tanyakan seputar materi kesehatan atau informasi poliklinik?",
             "audio": None
         }
     ]
 
-# Tampilkan riwayat percakapan
+# Tampilkan riwayat chat
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.write(msg["content"])
         if msg.get("audio"):
             st.audio(msg["audio"], format="audio/mp3")
 
-# Area input mikrofon
+# Area tombol rekam suara
 st.markdown("---")
-col_audio, col_label = st.columns([1, 5])
-with col_audio:
+col_mic, col_desc = st.columns([1, 5])
+with col_mic:
     audio_bytes = audio_recorder(
         text="",
         recording_color="#e02424",
@@ -83,7 +85,7 @@ with col_audio:
         icon_name="microphone",
         icon_size="2x"
     )
-with col_label:
+with col_desc:
     st.caption("🎙️ Ketuk mikrofon untuk bicara, lalu ketuk lagi untuk berhenti & mengirim.")
 
 text_input = st.chat_input("Atau ketik pertanyaan kesehatan/poliklinik di sini...")
@@ -115,20 +117,21 @@ Berikut DATABASE RESMI JADWAL & MATERI KESEHATAN RSUD KOTA BANDUNG:
 ---
 
 ATURAN MENJAWAB:
-1. Pahami sinonim kata (contoh: syaraf = saraf = neurologi, obgyn = kandungan, anak = pediatri).
-2. Jika menanyakan jadwal, WAJIB sebutkan nama klinik, nama lengkap dokter, hari, dan jam praktik secara rinci sesuai database.
-3. Buat kalimat yang jelas, ramah, dan ringkas agar nyaman didengar saat dibacakan suara audio.
+1. Pahami sinonim kata (contoh: syaraf = saraf = neurologi, obgyn = kandungan, anak = pediatri, jiwa = psikiatri).
+2. Jika pengguna menanyakan jadwal poli atau dokter, carilah di database di atas. WAJIB sebutkan nama klinik, nama dokter, serta hari dan jam praktiknya secara rinci.
+3. Jawab dengan bahasa Indonesia yang ramah, sopan, dan ringkas agar nyaman didengar saat dibacakan suara audio.
 """
 
     with st.chat_message("assistant"):
         with st.spinner("SAE sedang memproses tanggapan..."):
             try:
                 if audio_payload:
-                    contents_input = [
-                        system_instruction,
-                        "Dengarkan rekaman audio ini, pahami pertanyaannya, lalu jawab sesuai panduan database RSUD Kota Bandung:",
-                        {"mime_type": "audio/wav", "data": audio_payload}
-                    ]
+                    audio_part = types.Part.from_bytes(
+                        data=audio_payload,
+                        mime_type="audio/wav"
+                    )
+                    prompt_text = f"{system_instruction}\n\nDengarkan rekaman audio ini, pahami pertanyaannya, lalu jawab sesuai panduan database RSUD Kota Bandung di atas:"
+                    contents_input = [prompt_text, audio_part]
                 else:
                     contents_input = f"{system_instruction}\n\nPertanyaan: {prompt_final}"
 
