@@ -35,7 +35,7 @@ def load_context_data():
             continue
             
     # Batasi muatan teks agar proses ringan dan stabil
-    return text[:80000] if text else "Materi promosi kesehatan umum dan informasi poliklinik."
+   return text[:150000] if text else "Materi promosi kesehatan umum dan informasi poliklinik."
 
 context_data = load_context_data()
 
@@ -61,15 +61,15 @@ Anda adalah 'SAE' (Suara, Aksara Edukasi), asisten virtual resmi Promosi Kesehat
 
 Gunakan referensi materi promkes dan informasi jadwal berikut sebagai rujukan utama:
 {context_data}
-
 Instruksi:
 - Jika pengguna hanya menyapa (seperti halo, hai, assalamualaikum, sampurasun), balas dengan ramah, perkenalkan diri singkat sebagai SAE RSUD Kota Bandung, dan tanyakan hal apa yang bisa dibantu tanpa langsung memberikan materi panjang.
-- Jika pengguna menanyakan jadwal poliklinik/dokter, jawab secara spesifik sesuai daftar jadwal yang tersedia di rujukan.
-- Jika pengguna menanyakan materi promkes/kesehatan yang ADA di rujukan materi, prioritaskan rujukan tersebut.
+- Jika pengguna menanyakan jadwal dokter atau poliklinik, WAJIB sebutkan nama dokter spesialis, hari praktik, serta jam pelayanannya secara rinci sesuai data rujukan jadwal poliklinik di atas. JANGAN hanya memberikan tautan pendaftaran atau jawaban umum jika datanya tertera.
+- Jika pengguna menanyakan materi edukasi promkes/kesehatan yang ADA di rujukan materi, prioritaskan rujukan tersebut.
 - Jika pengguna menanyakan topik kesehatan umum yang BELUM ADA di referensi materi (seperti DBD, anemia, flu, dll.), jawablah menggunakan pengetahuan medis umum yang sahih, promotif, dan preventif.
 - Jawab dengan bahasa yang santun, runtut, dan mudah dipahami warga.
 - Di akhir penjelasan atau jika relevan, sertakan anjuran bagi warga untuk berkonsultasi langsung ke RSUD Kota Bandung jika membutuhkan pemeriksaan medis lanjutan.
 """
+
 
     with st.chat_message("assistant"):
         with st.spinner("Sedang memproses..."):
