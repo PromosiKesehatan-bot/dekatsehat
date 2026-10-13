@@ -1,10 +1,242 @@
-JADWAL POLIKLINIK RSUD KOTA BANDUNG (Update Juli 2026)
+JADWAL POLIKLINIK RSUD KOTA BANDUNG (Revisi 8 Juli 2026)
+
+Klinik Paru:
+1. dr. Astetin Eka Pranawita, Sp.P
+- Senin s.d Jum'at: 08.00 s.d 10.00 WIB
+- Sabtu: 08.00 s.d 09.00 WIB
+
+Klinik Jantung dan Pembuluh Darah:
+1. dr. Dini Rostiati, Sp.JP
+- Senin s.d Kamis: 08.00 s.d 14.00 WIB
+- Jum'at: 08.00 s.d 13.00 WIB
+- Sabtu: 08.00 s.d 12.00 WIB
+2. dr. Desti Listina, Sp.JP
+- Selasa & Rabu: 08.00 s.d 12.00 WIB
+- Jum'at & Sabtu: 08.00 s.d 12.00 WIB
+
+Klinik Kulit & Kelamin:
+1. dr. Diana Devi Ariana Moeliono, Sp.DVE, M.Kes, FINSDV
+- Senin s.d Kamis: 08.00 s.d 11.30 WIB
+- Jum'at: 08.00 s.d 10.30 WIB
+- Sabtu: 08.00 s.d 10.00 WIB
+2. dr. Nindayu Rizki Pujiastuti, Sp.DVE
+- Senin s.d Kamis: 08.00 s.d 11.30 WIB
+- Jum'at: 08.00 s.d 10.30 WIB
+- Sabtu: 08.00 s.d 10.00 WIB
+
+Klinik Bedah Saraf:
+1. dr. Anggiat Sahat Silaen, Sp.BS
+- Senin: 09.00 s.d 11.00 WIB
+- Rabu & Kamis: 11.00 s.d 13.00 WIB
+
+Klinik Bedah Anak:
+1. dr. Arief Budiman, Sp.BA
+- Senin, Selasa & Kamis: 11.00 s.d 13.00 WIB
+
+Klinik THT-KL (Telinga, Hidung, Tenggorokan, dan Bedah Kepala Leher):
+1. dr. Eka Diancahyani Fatoni, Sp.THT-KL
+- Senin, Rabu & Jum'at: 07.30 s.d 11.00 WIB
+2. dr. Billy Yacub R, Sp.THT-KL
+- Senin & Kamis: 07.30 s.d 11.00 WIB
+3. dr. Anton Hilman, Sp.THT-BKL
+- Senin s.d Rabu: 10.00 s.d 12.00 WIB
+- Sabtu: 08.00 s.d 10.00 WIB
+
+Klinik DOTS:
+1. dr. Novi Budi Sari
+- Senin s.d Jum'at: 08.00 s.d 12.00 WIB
+- Sabtu: 08.00 s.d 11.00 WIB
+
+Klinik Psikiatri:
+1. dr. Elisabeth Handoko, Sp.KJ
+- Senin, Selasa & Kamis: 07.30 s.d 13.00 WIB
+2. dr. Retna Wulandari, Sp.KJ
+- Rabu & Jum'at: 07.30 s.d 12.00 WIB
+- Sabtu: 08.00 s.d 10.00 WIB
+
+Klinik Akupuntur:
+1. dr. Vera Nurmawati, Sp.Ak
+- Senin s.d Kamis: 08.00 s.d 12.00 WIB
+- Jum'at: 08.00 s.d 11.00 WIB
+- Sabtu: 08.00 s.d 09.00 WIB
 
 Klinik Saraf:
-1. dr. Romie K. Widjaya, Sp. S
+1. dr. Romie K. Widjaya, Sp.S
 - Selasa, Rabu & Jum'at: 08.00 s.d 11.00 WIB
 - Sabtu: 08.00 s.d 10.00 WIB
-
-2. dr. Sofie Kaniawati, Sp. S
+2. dr. Sofie Kaniawati, Sp.S
 - Senin, Kamis & Jum'at: 08.00 s.d 11.00 WIB
 - Sabtu: 08.00 s.d 10.00 WIB
+
+Klinik Mata:
+1. dr. Retno Dwiyanti, Sp.M
+- Senin s.d Jum'at: 08.00 s.d 12.00 WIB
+- Sabtu: 08.00 s.d 10.00 WIB
+2. dr. Amaranita Sukanto, Sp.M
+- Senin & Jum'at: 08.00 s.d 12.00 WIB
+- Selasa s.d Kamis: 09.00 s.d 12.00 WIB
+- Sabtu: 08.00 s.d 10.00 WIB
+
+Klinik Bedah Orthopedi dan Traumatologi:
+1. dr. R Dadan Gardea G, Sp.OT, CF-AOT
+- Senin & Kamis: 07.30 s.d 12.00 WIB
+2. dr. Naufal Chairulfatah, Sp.OT
+- Rabu & Jum'at: 08.00 s.d 12.00 WIB (Jum'at s.d 11.30 WIB)
+3. dr. Hery Setiawan, Sp.OT (K)
+- Selasa & Sabtu: 07.30 s.d 12.00 WIB
+
+Klinik Gigi Umum:
+1. drg. Rina K. Agustin
+- Senin s.d Kamis: 08.00 s.d 12.00 WIB
+- Jum'at & Sabtu: 08.00 s.d 11.00 WIB
+2. drg. Willy Nugroho Trisula
+- Senin s.d Kamis: 08.00 s.d 12.00 WIB
+- Jum'at & Sabtu: 08.00 s.d 11.00 WIB
+
+Klinik Konservasi Gigi:
+1. drg. R. Nuni Maharani, Sp.KG
+- Senin s.d Kamis: 08.00 s.d 12.00 WIB
+- Jum'at & Sabtu: 08.00 s.d 10.00 WIB
+
+Klinik Orthodonti:
+1. drg. Mulyadi, Sp.Orth
+- Senin s.d Kamis: 07.30 s.d 12.00 WIB
+- Jum'at: 07.30 s.d 10.00 WIB
+- Sabtu: 08.00 s.d 10.00 WIB
+2. drg. Eva Dianingtyas, Sp.Orth
+- Senin s.d Jum'at: 07.30 s.d 11.00 WIB
+- Sabtu: 08.00 s.d 10.00 WIB
+
+Klinik Bedah Mulut:
+1. drg. Sulaiman Ridwan, Sp.BM
+- Senin s.d Kamis: 08.00 s.d 11.00 WIB
+- Jum'at: 08.00 s.d 10.00 WIB
+- Sabtu: 11.00 s.d 12.00 WIB
+
+Klinik VCT dan CST:
+1. dr. Ely Ismawati
+- Senin s.d Jum'at: 07.30 s.d 12.00 WIB
+- Sabtu: 08.00 s.d 13.00 WIB
+
+Klinik Obgyn (Kandungan dan Kebidanan):
+1. dr. Berland Budiman, Sp.OG
+- Senin: 08.00 s.d 12.00 WIB
+2. dr. Hilman, Sp.OG
+- Selasa: 09.00 s.d 12.00 WIB
+- Jum'at: 08.00 s.d 11.30 WIB
+3. dr. R Ahyar Nugraha, Sp.OG
+- Rabu: 08.00 s.d 12.00 WIB
+- Sabtu: 09.00 s.d 12.00 WIB
+4. dr. Umar Seno Waskito, Sp.OG (K)., M.Kes
+- Kamis: 08.00 s.d 12.00 WIB
+5. dr. Tawan Ika Noprianda, Sp.OG (K) FER
+- Rabu: 12.00 s.d 14.00 WIB
+- Jum'at: 13.00 s.d 14.00 WIB
+
+Klinik Fetomaternal:
+1. dr. Umar Seno Waskito, Sp.OG (K)., M.Kes
+- Selasa & Kamis: 08.00 s.d 12.00 WIB
+
+Klinik Tumbuh Kembang:
+1. dr. Amelia Harsanti, Sp.A
+- Rabu: 08.00 s.d 11.00 WIB
+- Jum'at (Minggu 1 dan 3): 08.00 s.d 11.00 WIB
+
+Klinik Anak:
+1. dr. Junita Sinaga, Sp.A
+- Senin & Rabu: 08.00 s.d 11.30 WIB
+- Jum'at & Sabtu: 08.00 s.d 10.00 WIB
+2. dr. Amelia Harsanti, Sp.A
+- Selasa & Kamis: 08.00 s.d 12.00 WIB
+- Jum'at (Minggu 2 dan 4): 08.00 s.d 12.00 WIB
+- Sabtu (Minggu 1 dan 3): 08.00 s.d 12.00 WIB
+3. dr. R. Ayu Alia, Sp.A, M.Kes
+- Selasa & Kamis: 08.00 s.d 12.00 WIB
+- Jum'at (Minggu 2 dan 4): 08.00 s.d 12.00 WIB
+- Sabtu (Minggu 1 dan 3): 08.00 s.d 12.00 WIB
+4. dr. Rissa Puspitari Sabur, Sp.A
+- Senin & Rabu: 09.00 s.d 12.00 WIB
+- Jum'at (Minggu 1 dan 3): 09.00 s.d 11.00 WIB
+- Sabtu (Minggu 2 dan 4): 09.00 s.d 11.00 WIB
+
+Klinik MCU:
+1. dr. Sri Cahyati
+- Senin s.d Jum'at: 07.30 s.d 12.00 WIB
+- Sabtu: 08.00 s.d 11.00 WIB
+
+Klinik Urologi:
+1. dr. Stephen Kuswanto, Sp.U
+- Senin & Selasa: 12.00 s.d 14.00 WIB
+- Kamis: 12.00 s.d 13.30 WIB
+
+Klinik Penyakit Dalam / Thalasemia:
+1. dr. M. Paula Cynthia, Sp.PD
+- Senin: 10.00 s.d 14.30 WIB
+- Kamis: 10.30 s.d 14.30 WIB
+2. dr. Roswita Noor, Sp.PD
+- Selasa: 09.30 s.d 14.00 WIB
+3. dr. Osman Hasan, Sp.PD
+- Rabu: 09.30 s.d 14.00 WIB
+4. dr. Amira Addiniya, Sp.PD
+- Kamis: 08.00 s.d 14.00 WIB
+5. dr. Eva Noviani Lestari, MMRS., MHKes., Sp.PD
+- Jum'at: 09.00 s.d 14.00 WIB
+6. dr. Intan Noha Brilyanti, Sp.PD
+- Sabtu: 08.30 s.d 12.00 WIB
+
+Klinik Bedah Umum:
+1. dr. Richard Tobing, Sp.B
+- Senin & Jum'at: 11.00 s.d 14.00 WIB
+2. dr. Andy Saruam Pardede, Sp.B
+- Selasa & Kamis: 09.00 s.d 12.00 WIB
+3. dr. Ihsan Ali Muharom, Sp.B
+- Rabu: 09.00 s.d 12.00 WIB
+- Jum'at: 09.00 s.d 11.45 WIB
+4. dr. Putri Anggiana Rahma Dewi, Sp.B
+- Senin & Sabtu: 10.00 s.d 12.00 WIB
+
+Klinik Bedah Plastik:
+1. dr. Amelia Febrina, Sp.B.P.R.E
+- Rabu & Kamis: 09.00 s.d 12.00 WIB
+
+Klinik Rehabilitasi Medik:
+1. dr. Lia Amalia Suparyadi, M.Kes, Sp.KFR, AIFO-K
+- Senin s.d Jum'at: 07.30 s.d 14.30 WIB
+- Sabtu: 08.00 s.d 13.00 WIB
+2. dr. Sari Sekarsari, M.Kes, Sp.KFR, AIFO-K
+- Senin & Kamis: 13.30 s.d 15.30 WIB
+- Selasa, Rabu, Jum'at & Sabtu: 09.00 s.d 12.00 WIB
+
+Klinik Geriatri:
+1. dr. Eva Noviani Lestari, MMRS., MHKes., Sp.PD
+- Selasa: 07.30 s.d 11.00 WIB
+
+Klinik Homecare:
+1. dr. Richard S.H.L Tobing, Sp.B (K) Onk
+- Senin s.d Sabtu: 07.30 s.d 14.30 WIB
+
+Klinik EEG:
+1. dr. Romie K. Widjaya, Sp.N., M.Kes
+- Sabtu: 10.00 s.d 12.30 WIB
+2. dr. Sofie Kaniawati, Sp.N
+- Sabtu: 10.00 s.d 12.30 WIB
+
+Klinik Gizi:
+1. Ira Tri Septiani, Amd.Gz
+- Senin s.d Jum'at: 08.00 s.d 14.00 WIB
+- Sabtu: 08.00 s.d 12.00 WIB
+
+Klinik Hemodialisa:
+1. dr. Roswita Noor, Sp.PD
+2. dr. Osman Hasan, Sp.PD
+3. dr. M. Paula Cynthia, Sp.PD
+```[cite: 14, 15, 16, 17, 18, 19, 20, 21, 22]
+
+---
+
+### Langkah Terakhir:
+1. Buka kembali file **`jadwal_poliklinik.txt`** di GitHub Anda[cite: 12].
+2. Klik ikon pensil (**Edit this file**)[cite: 12].
+3. Hapus isinya yang lama, lalu tempel (*paste*) seluruh teks lengkap di atas.
+4. Klik tombol hijau **Commit changes...**[cite: 10].
+5. Buka tab **Streamlit**, klik menu titik tiga (**⋮**) di pojok kanan atas $\rightarrow$ pilih **Clear cache**, lalu **Rerun**.
