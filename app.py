@@ -1,6 +1,7 @@
 import streamlit as st
 from google import genai
 import PyPDF2
+import os
 
 st.set_page_config(page_title="DekatSehat", page_icon="🩺", layout="centered")
 
@@ -10,16 +11,18 @@ client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
 @st.cache_resource
 def load_pdf_context():
     text = ""
-    try:
-        with open("materi_promkes.pdf", "rb") as file:
-            reader = PyPDF2.PdfReader(file)
-            for page in reader.pages:
-                extracted = page.extract_text()
-                if extracted:
-                    text += extracted + "\n"
-    except Exception as e:
-        text = "Materi promosi kesehatan umum."
-    return text
+    pdf_files = [f for f in os.listdir(".") if f.endswith(".pdf")]
+    for pdf_file in pdf_files:
+        try:
+            with open(pdf_file, "rb") as file:
+                reader = PyPDF2.PdfReader(file)
+                for page in reader.pages:
+                    extracted = page.extract_text()
+                    if extracted:
+                        text += extracted + "\n"
+        except Exception as e:
+            continue
+    return text if text else "Materi promosi kesehatan umum."
 
 context_data = load_pdf_context()
 
