@@ -6,6 +6,7 @@ from gtts import gTTS
 import PyPDF2
 import os
 import io
+import time
 
 st.set_page_config(page_title="SAE RSUD Kota Bandung", page_icon="🩺", layout="centered")
 
@@ -86,7 +87,7 @@ with col_mic:
         icon_size="2x"
     )
 with col_desc:
-    st.caption("🎙️ Ketuk mikrofon untuk bicara, lalu ketuk lagi untuk berhenti & mengirim.")
+    st.caption("🎙️ Ketuk ikon mikrofon untuk bicara, lalu ketuk lagi untuk berhenti & mengirim.")
 
 text_input = st.chat_input("Atau ketik pertanyaan kesehatan/poliklinik di sini...")
 
@@ -124,24 +125,30 @@ ATURAN MENJAWAB:
 
     with st.chat_message("assistant"):
         with st.spinner("SAE sedang memproses tanggapan..."):
-            try:
-                if audio_payload:
-                    audio_part = types.Part.from_bytes(
-                        data=audio_payload,
-                        mime_type="audio/wav"
+            jawaban = None
+            for _ in range(3):
+                try:
+                    if audio_payload:
+                        audio_part = types.Part.from_bytes(
+                            data=audio_payload,
+                            mime_type="audio/wav"
+                        )
+                        prompt_text = f"{system_instruction}\n\nDengarkan rekaman audio ini, pahami pertanyaannya, lalu jawab sesuai panduan database RSUD Kota Bandung di atas:"
+                        contents_input = [prompt_text, audio_part]
+                    else:
+                        contents_input = f"{system_instruction}\n\nPertanyaan: {prompt_final}"
+
+                    response = client.models.generate_content(
+                        model="gemini-3.8-flash",
+                        contents=contents_input
                     )
-                    prompt_text = f"{system_instruction}\n\nDengarkan rekaman audio ini, pahami pertanyaannya, lalu jawab sesuai panduan database RSUD Kota Bandung di atas:"
-                    contents_input = [prompt_text, audio_part]
-                else:
-                    contents_input = f"{system_instruction}\n\nPertanyaan: {prompt_final}"
+                    jawaban = response.text
+                    break
+                except Exception:
+                    time.sleep(2)
 
-                response = client.models.generate_content(
-                    model="gemini-3.8-flash",
-                    contents=contents_input
-                )
-                jawaban = response.text
+            if jawaban:
                 st.write(jawaban)
-
                 audio_stream = teks_ke_suara(jawaban)
                 st.audio(audio_stream, format="audio/mp3", autoplay=True)
 
@@ -150,5 +157,5 @@ ATURAN MENJAWAB:
                     "content": jawaban,
                     "audio": audio_stream
                 })
-            except Exception as e:
-                st.error(f"Terjadi kendala saat memproses: {e}")
+            else:
+                st.error("Server sedang padat atau jaringan terganggu. Silakan ketuk mikrofon dan coba rekam kembali ya.")
