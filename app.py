@@ -16,13 +16,15 @@ def load_pdf_context():
         try:
             with open(pdf_file, "rb") as file:
                 reader = PyPDF2.PdfReader(file)
-                for page in reader.pages:
+                # Ambil 35 halaman pertama per dokumen (bagian substansi utama)
+                for page in reader.pages[:35]:
                     extracted = page.extract_text()
                     if extracted:
                         text += extracted + "\n"
         except Exception as e:
             continue
-    return text if text else "Materi promosi kesehatan umum."
+    # Batasi muatan maksimal teks yang dikirim ke AI
+    return text[:80000] if text else "Materi promosi kesehatan umum."
 
 context_data = load_pdf_context()
 
