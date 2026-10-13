@@ -5,7 +5,7 @@ import os
 
 st.set_page_config(page_title="DekatSehat", page_icon="🩺", layout="centered")
 
-# Inisialisasi API Client Gemini versi baru
+# Inisialisasi API Client Gemini
 client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
 
 @st.cache_resource
@@ -16,14 +16,14 @@ def load_pdf_context():
         try:
             with open(pdf_file, "rb") as file:
                 reader = PyPDF2.PdfReader(file)
-                # Ambil 35 halaman pertama per dokumen (bagian substansi utama)
+                # Ambil 35 halaman pertama per dokumen
                 for page in reader.pages[:35]:
                     extracted = page.extract_text()
                     if extracted:
                         text += extracted + "\n"
         except Exception as e:
             continue
-    # Batasi muatan maksimal teks yang dikirim ke AI
+    # Batasi muatan teks agar ringan dan stabil
     return text[:80000] if text else "Materi promosi kesehatan umum."
 
 context_data = load_pdf_context()
@@ -33,7 +33,7 @@ st.caption("Asisten Edukasi & Informasi Kesehatan Masyarakat berbasis AI")
 
 if "messages" not in st.session_state:
     st.session_state.messages = [
-        {"role": "assistant", "content": "Halo! Saya asisten edukasi kesehatan DekatSehat. Ada yang ingin Anda tanyakan seputar materi kesehatan atau pencegahan penyakit?"}
+        {"role": "assistant", "content": "Halo! Saya asisten edukasi kesehatan DekatSehat dari Instalasi Promosi Kesehatan RSUD Kota Bandung. Ada yang ingin Anda tanyakan seputar materi kesehatan atau pencegahan penyakit?"}
     ]
 
 for msg in st.session_state.messages:
@@ -45,8 +45,7 @@ if prompt := st.chat_input("Ketik pertanyaan kesehatan Anda di sini..."):
     with st.chat_message("user"):
         st.write(prompt)
 
-
-system_instruction = f"""
+    system_instruction = f"""
 Anda adalah 'DekatSehat', asisten virtual resmi Promosi Kesehatan RSUD Kota Bandung yang ramah, edukatif, empatik, dan mudah dipahami masyarakat.
 
 Gunakan referensi materi promkes berikut sebagai rujukan utama:
@@ -58,13 +57,13 @@ Instruksi:
 - Jika pengguna menanyakan topik kesehatan umum yang BELUM ADA di referensi materi (seperti anemia, DBD, flu, dll.), jawablah menggunakan pengetahuan medis umum yang sahih, promotif, dan preventif.
 - Jawab dengan bahasa yang mudah dipahami warga, terstruktur, dan aplikatif.
 - Di akhir jawaban atau jika relevan, berikan anjuran kepada warga untuk berkonsultasi langsung ke RSUD Kota Bandung bila memerlukan pemeriksaan medis lebih lanjut.
-    """
+"""
 
     with st.chat_message("assistant"):
         with st.spinner("Sedang memproses..."):
             try:
                 response = client.models.generate_content(
-                    "model="gemini-2.5-flash",",
+                    model="gemini-2.5-flash",
                     contents=f"{system_instruction}\n\nPertanyaan: {prompt}"
                 )
                 jawaban = response.text
