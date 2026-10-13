@@ -33,7 +33,7 @@ st.caption("Asisten Edukasi & Informasi Kesehatan Masyarakat berbasis AI")
 
 if "messages" not in st.session_state:
     st.session_state.messages = [
-        {"role": "assistant", "content": "Halo! Saya asisten edukasi kesehatan DekatSehat. Ada yang ingin Anda tanyakan seputar materi kesehatan atau pencegahan penyakit?"}
+        {"role": "assistant", "content": "Halo! Saya asisten edukasi kesehatan DekatSehat RSUD Kota Bandung. Ada yang ingin Anda tanyakan seputar materi kesehatan atau pencegahan penyakit?"}
     ]
 
 for msg in st.session_state.messages:
@@ -46,7 +46,7 @@ if prompt := st.chat_input("Ketik pertanyaan kesehatan Anda di sini..."):
         st.write(prompt)
 
     system_instruction = f"""
-    Anda adalah 'DekatSehat', asisten virtual promosi kesehatan masyarakat yang ramah, informatif, dan mudah dipahami.
+    Anda adalah 'DekatSehat', asisten virtual promosi kesehatan RSUD Kota Bandung bagi masyarakat yang ramah, informatif, dan mudah dipahami.
     Gunakan referensi materi promkes berikut untuk memperkaya jawaban Anda:
     {context_data}
 
