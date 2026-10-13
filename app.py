@@ -54,7 +54,7 @@ if prompt := st.chat_input("Ketik pertanyaan kesehatan Anda di sini..."):
         with st.spinner("Sedang memproses..."):
             try:
                 response = client.models.generate_content(
-                    model="gemini-2.5-flash",
+                    model="gemini-3.8-flash",
                     contents=f"{system_instruction}\n\nPertanyaan: {prompt}"
                 )
                 jawaban = response.text
