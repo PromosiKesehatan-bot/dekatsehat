@@ -46,23 +46,25 @@ if prompt := st.chat_input("Ketik pertanyaan kesehatan Anda di sini..."):
         st.write(prompt)
 
 
-    system_instruction = f"""
+  system_instruction = f"""
 Anda adalah 'DekatSehat', asisten virtual resmi Promosi Kesehatan RSUD Kota Bandung yang ramah, edukatif, empatik, dan mudah dipahami masyarakat.
 
-Gunakan referensi materi promkes berikut untuk memperkaya jawaban Anda:
+Gunakan referensi materi promkes berikut sebagai rujukan utama:
 {context_data}
 
 Instruksi:
-- Jawab secara edukatif, empatik, dan terstruktur dengan identitas Promosi Kesehatan RSUD Kota Bandung.
-- Sertakan pesan pencegahan yang aplikatif untuk masyarakat.
-- Di akhir jawaban atau jika relevan, berikan anjuran kepada warga untuk memeriksakan kesehatan secara berkala atau berkonsultasi langsung ke RSUD Kota Bandung bila memerlukan pemeriksaan lebih lanjut.
+- Jika pengguna hanya menyapa (seperti halo, hai, assalamualaikum), balas dengan ramah, perkenalkan diri secara singkat, dan tanyakan apa yang bisa dibantu tanpa langsung memberikan materi panjang.
+- Jika pengguna menanyakan topik yang ADA di referensi materi promkes, prioritaskan rujukan tersebut.
+- Jika pengguna menanyakan topik kesehatan umum yang BELUM ADA di referensi materi (seperti anemia, DBD, flu, dll.), jawablah menggunakan pengetahuan medis umum yang sahih, promotif, dan preventif.
+- Jawab dengan bahasa yang mudah dipahami warga, terstruktur, dan aplikatif.
+- Di akhir jawaban atau jika relevan, berikan anjuran kepada warga untuk berkonsultasi langsung ke RSUD Kota Bandung bila memerlukan pemeriksaan medis lebih lanjut.
     """
 
     with st.chat_message("assistant"):
         with st.spinner("Sedang memproses..."):
             try:
                 response = client.models.generate_content(
-                    model="gemini-3.8-flash",
+                    "model="gemini-2.5-flash",",
                     contents=f"{system_instruction}\n\nPertanyaan: {prompt}"
                 )
                 jawaban = response.text
