@@ -3,7 +3,7 @@ from google import genai
 import PyPDF2
 import os
 
-st.set_page_config(page_title="DekatSehat", page_icon="🩺", layout="centered")
+st.set_page_config(page_title="SAE RSUD Kota Bandung", page_icon="🩺", layout="centered")
 
 # Inisialisasi API Client Gemini
 client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
@@ -28,12 +28,12 @@ def load_pdf_context():
 
 context_data = load_pdf_context()
 
-st.title("🩺 DekatSehat")
-st.caption("Asisten Edukasi & Informasi Kesehatan Masyarakat berbasis AI")
+st.title("🩺 SAE RSUD Kota Bandung")
+st.caption("Suara, Aksara Edukasi - Asisten Edukasi & Informasi Kesehatan Masyarakat berbasis AI")
 
 if "messages" not in st.session_state:
     st.session_state.messages = [
-        {"role": "assistant", "content": "Halo! Saya asisten edukasi kesehatan DekatSehat dari Instalasi Promosi Kesehatan RSUD Kota Bandung. Ada yang ingin Anda tanyakan seputar materi kesehatan atau pencegahan penyakit?"}
+        {"role": "assistant", "content": "Halo! Saya asisten edukasi kesehatan SAE dari Instalasi Promosi Kesehatan RSUD Kota Bandung. Ada yang ingin Anda tanyakan seputar materi kesehatan atau pencegahan penyakit?"}
     ]
 
 for msg in st.session_state.messages:
@@ -46,7 +46,7 @@ if prompt := st.chat_input("Ketik pertanyaan kesehatan Anda di sini..."):
         st.write(prompt)
 
     system_instruction = f"""
-Anda adalah 'DekatSehat', asisten virtual resmi Promosi Kesehatan RSUD Kota Bandung yang ramah, edukatif, empatik, dan mudah dipahami masyarakat.
+Anda adalah 'SAE', asisten virtual resmi Promosi Kesehatan RSUD Kota Bandung yang ramah, edukatif, empatik, dan mudah dipahami masyarakat.
 
 Gunakan referensi materi promkes berikut sebagai rujukan utama:
 {context_data}
