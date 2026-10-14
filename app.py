@@ -72,7 +72,7 @@ for msg in st.session_state.messages:
         if msg.get("audio"):
             st.audio(msg["audio"], format="audio/mp3")
 
-# Tombol Suara Web Speech API yang memicu pengiriman otomatis langsung
+# Tombol Suara Web Speech API
 voice_component = """
 <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
     <button id="micBtn" style="background:#dc2626; color:white; border:none; border-radius:50px; padding:10px 18px; font-size:14px; cursor:pointer; font-weight:bold; display:flex; align-items:center; gap:6px;">
@@ -106,7 +106,6 @@ if (SpeechRecognition) {
         status.innerText = "Terkirim: " + transcript;
         btn.style.background = "#dc2626";
         
-        // Isi teks ke chat input dan simulasi tombol Enter/Kirim secara paksa
         const doc = window.parent.document;
         const textarea = doc.querySelector('textarea[data-testid="stChatInputTextArea"]');
         if (textarea) {
@@ -157,21 +156,29 @@ Berikut DATABASE RESMI JADWAL & MATERI KESEHATAN RSUD KOTA BANDUNG:
 ---
 
 ATURAN MENJAWAB:
-1. Pahami sinonim kata (contoh: syaraf = saraf = neurologi, obgyn = kandungan, anak = pediatri, jiwa = psikiatri).
+1. Pahami sinonim kata (contoh: syaraf = saraf = neurologi, obgyn = kandungan, anak = pediatri, jiwa = psikiatri, poli dalam = penyakit dalam).
 2. Jika pengguna menanyakan jadwal poli atau dokter, carilah di database di atas. WAJIB sebutkan nama klinik, nama dokter, serta hari dan jam praktiknya secara rinci.
 3. Jawab dengan bahasa Indonesia yang ramah, ringkas, dan jelas agar nyaman didengarkan via audio.
 """
 
     with st.chat_message("assistant"):
         with st.spinner("SAE sedang memproses tanggapan..."):
-            try:
-                response = client.models.generate_content(
-                    model="gemini-3.8-flash",
-                    contents=f"{system_instruction}\n\nPertanyaan: {prompt}"
-                )
-                jawaban = response.text
-                st.write(jawaban)
+            jawaban = None
+            daftar_model = ["gemini-3.8-flash", "gemini-2.5-flash", "gemini-2.5-pro"]
+            
+            for m in daftar_model:
+                try:
+                    response = client.models.generate_content(
+                        model=m,
+                        contents=f"{system_instruction}\n\nPertanyaan: {prompt}"
+                    )
+                    jawaban = response.text
+                    break
+                except Exception:
+                    continue
 
+            if jawaban:
+                st.write(jawaban)
                 audio_stream = teks_ke_suara(jawaban)
                 st.audio(audio_stream, format="audio/mp3", autoplay=True)
 
@@ -180,5 +187,5 @@ ATURAN MENJAWAB:
                     "content": jawaban,
                     "audio": audio_stream
                 })
-            except Exception as e:
-                st.error(f"Terjadi kendala: {e}")
+            else:
+                st.error("Server AI sedang padat secara global. Silakan tekan tombol mikrofon sekali lagi.")
