@@ -71,7 +71,7 @@ st.caption("Suara, Aksara Edukasi — Asisten Edukasi & Informasi Kesehatan Masy
 
 def teks_ke_suara(teks):
     teks_bersih = teks.replace("*", "").replace("#", "").replace("-", " ")
-    # Batasi ke 180 karakter pertama agar proses suara langsung jadi dalam 1 detik
+    # Batasi intisari suara ke 180 karakter agar file audio tercipta dalam 1 detik
     teks_audio = teks_bersih[:180]
     tts = gTTS(text=teks_audio, lang="id")
     fp = io.BytesIO()
@@ -118,89 +118,3 @@ if (SpeechRecognition) {
             recognition.start();
             status.innerText = "Mendengarkan...";
             btn.style.background = "#16a34a";
-        } catch (e) {
-            recognition.stop();
-        }
-    };
-
-    recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        status.innerText = "Terkirim: " + transcript;
-        btn.style.background = "#dc2626";
-        
-        const doc = window.parent.document;
-        const textarea = doc.querySelector('textarea[data-testid="stChatInputTextArea"]');
-        if (textarea) {
-            const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.parent.HTMLTextAreaElement.prototype, "value").set;
-            nativeInputValueSetter.call(textarea, transcript);
-            textarea.dispatchEvent(new Event('input', { bubbles: true }));
-
-            setTimeout(() => {
-                const sendBtn = doc.querySelector('button[data-testid="stChatInputSubmitButton"]');
-                if (sendBtn) {
-                    sendBtn.disabled = false;
-                    sendBtn.click();
-                } else {
-                    textarea.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', keyCode: 13, bubbles: true }));
-                }
-            }, 300);
-        }
-    };
-
-    recognition.onerror = () => {
-        status.innerText = "Gagal merekam suara.";
-        btn.style.background = "#dc2626";
-    };
-
-    recognition.onend = () => {
-        btn.style.background = "#dc2626";
-    };
-} else {
-    status.innerText = "Gunakan peramban Chrome untuk fitur suara langsung.";
-}
-</script>
-"""
-components.html(voice_component, height=55)
-
-prompt = st.chat_input("Atau ketik pertanyaan kesehatan/poliklinik di sini...")
-
-if prompt:
-    st.session_state.messages.append({"role": "user", "content": prompt, "audio": None})
-    with st.chat_message("user"):
-        st.write(prompt)
-
-    system_instruction = f"""
-Anda adalah 'SAE' (Suara, Aksara Edukasi), asisten AI resmi RSUD Kota Bandung.
-
-DATABASE RESMI:
----
-{context_data}
----
-
-ATURAN:
-1. Pahami sinonim kata kesehatan & poliklinik.
-2. Jika menanyakan jadwal, tuliskan nama poli, nama dokter, hari, dan jam praktik secara ringkas dan padat.
-3. Langsung jawab intinya tanpa pembukaan kalimat yang panjang.
-"""
-
-    with st.chat_message("assistant"):
-        with st.spinner("SAE sedang memproses tanggapan..."):
-            try:
-                # Panggilan langsung tanpa delay
-                response = client.models.generate_content(
-                    model="gemini-3.8-flash",
-                    contents=f"{system_instruction}\n\nPertanyaan: {prompt}"
-                )
-                jawaban = response.text
-                st.write(jawaban)
-
-                audio_stream = teks_ke_suara(jawaban)
-                st.audio(audio_stream, format="audio/mp3", autoplay=True)
-
-                st.session_state.messages.append({
-                    "role": "assistant",
-                    "content": jawaban,
-                    "audio": audio_stream
-                })
-            except Exception as e:
-                st.error(f"Terjadi kendala saat memproses: {e}")
