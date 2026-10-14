@@ -15,7 +15,7 @@ def load_context_data():
     txt_data = ""
     pdf_data = ""
     
-    # 1. Baca berkas TXT (jadwal poliklinik)
+    # 1. Baca berkas TXT
     for f in os.listdir("."):
         if f.endswith(".txt") and f != "requirements.txt":
             try:
@@ -24,7 +24,7 @@ def load_context_data():
             except Exception:
                 continue
 
-    # 2. Baca berkas PDF (materi edukasi promkes)
+    # 2. Baca berkas PDF
     for f in os.listdir("."):
         if f.endswith(".pdf"):
             try:
@@ -72,7 +72,7 @@ for msg in st.session_state.messages:
         if msg.get("audio"):
             st.audio(msg["audio"], format="audio/mp3")
 
-# Tombol Suara Web Speech API
+# Tombol Suara Web Speech API yang memicu pengiriman otomatis langsung
 voice_component = """
 <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
     <button id="micBtn" style="background:#dc2626; color:white; border:none; border-radius:50px; padding:10px 18px; font-size:14px; cursor:pointer; font-weight:bold; display:flex; align-items:center; gap:6px;">
@@ -106,14 +106,22 @@ if (SpeechRecognition) {
         status.innerText = "Terkirim: " + transcript;
         btn.style.background = "#dc2626";
         
-        const inputs = window.parent.document.querySelectorAll('textarea[data-testid="stChatInputTextArea"]');
-        if (inputs.length > 0) {
-            const el = inputs[0];
-            el.value = transcript;
-            el.dispatchEvent(new Event('input', { bubbles: true }));
+        // Isi teks ke chat input dan simulasi tombol Enter/Kirim secara paksa
+        const doc = window.parent.document;
+        const textarea = doc.querySelector('textarea[data-testid="stChatInputTextArea"]');
+        if (textarea) {
+            const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.parent.HTMLTextAreaElement.prototype, "value").set;
+            nativeInputValueSetter.call(textarea, transcript);
+            textarea.dispatchEvent(new Event('input', { bubbles: true }));
+
             setTimeout(() => {
-                const sendBtn = window.parent.document.querySelector('button[data-testid="stChatInputSubmitButton"]');
-                if (sendBtn) sendBtn.click();
+                const sendBtn = doc.querySelector('button[data-testid="stChatInputSubmitButton"]');
+                if (sendBtn) {
+                    sendBtn.disabled = false;
+                    sendBtn.click();
+                } else {
+                    textarea.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', keyCode: 13, bubbles: true }));
+                }
             }, 300);
         }
     };
@@ -127,7 +135,7 @@ if (SpeechRecognition) {
         btn.style.background = "#dc2626";
     };
 } else {
-    status.innerText = "Gunakan browser Chrome untuk fitur suara langsung.";
+    status.innerText = "Gunakan peramban Chrome untuk fitur suara langsung.";
 }
 </script>
 """
