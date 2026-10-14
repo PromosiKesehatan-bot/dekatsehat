@@ -72,13 +72,13 @@ for msg in st.session_state.messages:
         if msg.get("audio"):
             st.audio(msg["audio"], format="audio/mp3")
 
-# Komponen Mikrofon Otomatis (Web Speech API)
+# Tombol Suara Web Speech API
 voice_component = """
-<div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
-    <button id="micBtn" style="background:#e02424; color:white; border:none; border-radius:50px; padding:10px 18px; font-size:14px; cursor:pointer; font-weight:bold; display:flex; align-items:center; gap:6px;">
+<div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+    <button id="micBtn" style="background:#dc2626; color:white; border:none; border-radius:50px; padding:10px 18px; font-size:14px; cursor:pointer; font-weight:bold; display:flex; align-items:center; gap:6px;">
         🎤 Bicara Sekarang
     </button>
-    <span id="micStatus" style="color:#aaa; font-size:13px;">Ketuk tombol untuk berbicara</span>
+    <span id="micStatus" style="color:#aaa; font-size:13px;">Ketuk tombol untuk bicara</span>
 </div>
 
 <script>
@@ -94,7 +94,7 @@ if (SpeechRecognition) {
     btn.onclick = () => {
         try {
             recognition.start();
-            status.innerText = "Mendengarkan suara Anda...";
+            status.innerText = "Mendengarkan...";
             btn.style.background = "#16a34a";
         } catch (e) {
             recognition.stop();
@@ -104,9 +104,8 @@ if (SpeechRecognition) {
     recognition.onresult = (event) => {
         const transcript = event.results[0][0].transcript;
         status.innerText = "Terkirim: " + transcript;
-        btn.style.background = "#e02424";
+        btn.style.background = "#dc2626";
         
-        // Kirim hasil suara langsung ke input chat streamlit
         const inputs = window.parent.document.querySelectorAll('textarea[data-testid="stChatInputTextArea"]');
         if (inputs.length > 0) {
             const el = inputs[0];
@@ -120,15 +119,15 @@ if (SpeechRecognition) {
     };
 
     recognition.onerror = () => {
-        status.innerText = "Gagal merekam. Pastikan izin mikrofon aktif.";
-        btn.style.background = "#e02424";
+        status.innerText = "Gagal merekam suara.";
+        btn.style.background = "#dc2626";
     };
 
     recognition.onend = () => {
-        btn.style.background = "#e02424";
+        btn.style.background = "#dc2626";
     };
 } else {
-    status.innerText = "Browser tidak mendukung rekaman langsung.";
+    status.innerText = "Gunakan browser Chrome untuk fitur suara langsung.";
 }
 </script>
 """
@@ -152,7 +151,7 @@ Berikut DATABASE RESMI JADWAL & MATERI KESEHATAN RSUD KOTA BANDUNG:
 ATURAN MENJAWAB:
 1. Pahami sinonim kata (contoh: syaraf = saraf = neurologi, obgyn = kandungan, anak = pediatri, jiwa = psikiatri).
 2. Jika pengguna menanyakan jadwal poli atau dokter, carilah di database di atas. WAJIB sebutkan nama klinik, nama dokter, serta hari dan jam praktiknya secara rinci.
-3. Jawab dengan bahasa Indonesia yang ramah, santun, dan ringkas agar nyaman didengarkan via audio.
+3. Jawab dengan bahasa Indonesia yang ramah, ringkas, dan jelas agar nyaman didengarkan via audio.
 """
 
     with st.chat_message("assistant"):
