@@ -71,7 +71,6 @@ st.caption("Suara, Aksara Edukasi — Asisten Edukasi & Informasi Kesehatan Masy
 
 def teks_ke_suara(teks):
     teks_bersih = teks.replace("*", "").replace("#", "").replace("-", " ")
-    # Batasi intisari suara ke 180 karakter agar file audio tercipta dalam 1 detik
     teks_audio = teks_bersih[:180]
     tts = gTTS(text=teks_audio, lang="id")
     fp = io.BytesIO()
@@ -118,3 +117,103 @@ if (SpeechRecognition) {
             recognition.start();
             status.innerText = "Mendengarkan...";
             btn.style.background = "#16a34a";
+        } catch (e) {
+            recognition.stop();
+        }
+    };
+
+    recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        status.innerText = "Terkirim: " + transcript;
+        btn.style.background = "#dc2626";
+        
+        const doc = window.parent.document;
+        const textarea = doc.querySelector('textarea[data-testid="stChatInputTextArea"]');
+        if (textarea) {
+            const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.parent.HTMLTextAreaElement.prototype, "value").set;
+            nativeInputValueSetter.call(textarea, transcript);
+            textarea.dispatchEvent(new Event('input', { bubbles: true }));
+
+            setTimeout(() => {
+                const sendBtn = doc.querySelector('button[data-testid="stChatInputSubmitButton"]');
+                if (sendBtn) {
+                    sendBtn.disabled = false;
+                    sendBtn.click();
+                } else {
+                    textarea.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', keyCode: 13, bubbles: true }));
+                }
+            }, 300);
+        }
+    };
+
+    recognition.onerror = () => {
+        status.innerText = "Gagal merekam suara.";
+        btn.style.background = "#dc2626";
+    };
+
+    recognition.onend = () => {
+        btn.style.background = "#dc2626";
+    };
+} else {
+    status.innerText = "Gunakan peramban Chrome untuk fitur suara langsung.";
+}
+</script>
+"""
+components.html(voice_component, height=55)
+
+prompt = st.chat_input("Atau ketik pertanyaan kesehatan/poliklinik di sini...")
+
+if prompt:
+    st.session_state.messages.append({"role": "user", "content": prompt, "audio": None})
+    with st.chat_message("user"):
+        st.write(prompt)
+
+    system_instruction = f"""
+Anda adalah 'SAE' (Suara, Aksara Edukasi), asisten AI resmi RSUD Kota Bandung.
+
+DATABASE RESMI:
+---
+{context_data}
+---
+
+ATURAN:
+1. Pahami sinonim kata kesehatan & poliklinik (contoh: syaraf = saraf = neurologi, obgyn = kandungan, anak = pediatri, poli dalam = penyakit dalam).
+2. Jika menanyakan jadwal, tuliskan nama poli, nama dokter, hari, dan jam praktik secara ringkas dan padat.
+3. Langsung jawab intinya tanpa pembukaan kalimat yang panjang.
+"""
+
+    with st.chat_message("assistant"):
+        placeholder_teks = st.empty()
+        with st.spinner("SAE sedang memproses tanggapan..."):
+            jawaban = None
+            daftar_model = ["gemini-2.0-flash", "gemini-1.5-flash"]
+            
+            for m in daftar_model:
+                try:
+                    response = client.models.generate_content(
+                        model=m,
+                        contents=f"{system_instruction}\n\nPertanyaan: {prompt}"
+                    )
+                    if response.text:
+                        jawaban = response.text
+                        placeholder_teks.write(jawaban)
+                        break
+                except Exception:
+                    continue
+            
+            if not jawaban:
+                placeholder_teks.warning("Jaringan AI sedang sangat padat. Silakan klik tombol 'Bicara Sekarang' lagi ya.")
+
+            if jawaban:
+                audio_stream = None
+                try:
+                    audio_stream = teks_ke_suara(jawaban)
+                    st.audio(audio_stream, format="audio/mp3", autoplay=True)
+                except Exception:
+                    pass
+
+                st.session_state.messages.append({
+                    "role": "assistant",
+                    "content": jawaban,
+                    "audio": audio_stream
+                })
