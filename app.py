@@ -5,27 +5,38 @@ from gtts import gTTS
 import PyPDF2
 import os
 import io
+import time
 
 st.set_page_config(page_title="SAE RSUD Kota Bandung", page_icon="🩺", layout="centered")
 
-# Desain Gradien Biru Elegan & Kartu Glassmorphism
+# Kustomisasi Desain Background & Tampilan Elegan
 custom_css = """
 <style>
-.stApp, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
-    background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%) !important;
+/* Background gradien elegan */
+.stApp {
+    background: linear-gradient(135deg, #0d1b2a 0%, #1b263b 50%, #0f2c42 100%);
+    color: #e0e6ed;
 }
-header {visibility: hidden !important;}
+
+/* Header & sidebar */
+header {visibility: hidden;}
+section[data-testid="stSidebar"] {
+    background-color: rgba(13, 27, 42, 0.85);
+}
+
+/* Kotak obrolan dengan efek glassmorphism */
 div[data-testid="stChatMessage"] {
-    background: rgba(255, 255, 255, 0.08) !important;
-    border: 1px solid rgba(255, 255, 255, 0.15) !important;
-    border-radius: 16px !important;
-    backdrop-filter: blur(8px) !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
-    margin-bottom: 12px !important;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    padding: 12px;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
+
+/* Input chat di bagian bawah */
 div[data-testid="stChatInput"] {
-    background: rgba(255, 255, 255, 0.05) !important;
-    border-radius: 14px !important;
+    border-radius: 12px;
 }
 </style>
 """
@@ -38,6 +49,7 @@ def load_context_data():
     txt_data = ""
     pdf_data = ""
     
+    # 1. Baca berkas TXT
     for f in os.listdir("."):
         if f.endswith(".txt") and f != "requirements.txt":
             try:
@@ -46,6 +58,7 @@ def load_context_data():
             except Exception:
                 continue
 
+    # 2. Baca berkas PDF
     for f in os.listdir("."):
         if f.endswith(".pdf"):
             try:
@@ -59,7 +72,7 @@ def load_context_data():
                 continue
             
     gabungan = f"DATA RESMI JADWAL POLIKLINIK RSUD KOTA BANDUNG:\n{txt_data}\n\nMATERI EDUKASI KESEHATAN:\n{pdf_data}"
-    return gabungan[:100000] if txt_data or pdf_data else "Materi promosi kesehatan dan informasi poliklinik."
+    return gabungan[:120000] if txt_data or pdf_data else "Materi promosi kesehatan dan informasi poliklinik."
 
 context_data = load_context_data()
 
@@ -71,7 +84,7 @@ st.caption("Suara, Aksara Edukasi — Asisten Edukasi & Informasi Kesehatan Masy
 
 def teks_ke_suara(teks):
     teks_bersih = teks.replace("*", "").replace("#", "").replace("-", " ")
-    teks_audio = teks_bersih[:200]
+    teks_audio = teks_bersih[:350]
     tts = gTTS(text=teks_audio, lang="id")
     fp = io.BytesIO()
     tts.write_to_fp(fp)
@@ -87,6 +100,7 @@ if "messages" not in st.session_state:
         }
     ]
 
+# Tampilkan riwayat percakapan
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.write(msg["content"])
@@ -171,27 +185,36 @@ if prompt:
     system_instruction = f"""
 Anda adalah 'SAE' (Suara, Aksara Edukasi), asisten AI resmi RSUD Kota Bandung.
 
-DATABASE RESMI:
+Berikut DATABASE RESMI JADWAL & MATERI KESEHATAN RSUD KOTA BANDUNG:
 ---
 {context_data}
 ---
 
-ATURAN:
-1. Pahami sinonim kata kesehatan & poliklinik (contoh: syaraf = saraf = neurologi, obgyn = kandungan, anak = pediatri, jiwa = psikiatri, poli dalam = penyakit dalam).
-2. Jika menanyakan jadwal, tuliskan nama poli, nama dokter, hari, dan jam praktiknya secara ringkas dan padat.
-3. Langsung jawab intinya tanpa pembukaan kalimat yang panjang.
+ATURAN MENJAWAB:
+1. Pahami sinonim kata (contoh: syaraf = saraf = neurologi, obgyn = kandungan, anak = pediatri, jiwa = psikiatri, poli dalam = penyakit dalam).
+2. Jika pengguna menanyakan jadwal poli atau dokter, carilah di database di atas. Sebutkan nama klinik, dokter, hari, dan jam praktiknya secara padat dan to the point.
+3. Hindari pembukaan basa-basi yang panjang agar jawaban cepat dibaca dan diubah ke audio.
 """
 
     with st.chat_message("assistant"):
         with st.spinner("SAE sedang memproses tanggapan..."):
-            try:
-                response = client.models.generate_content(
-                    model="gemini-2.5-flash",
-                    contents=f"{system_instruction}\n\nPertanyaan: {prompt}"
-                )
-                jawaban = response.text
-                st.write(jawaban)
+            jawaban = None
+            for attempt in range(3):
+                try:
+                    response = client.models.generate_content(
+                        model="gemini-3.8-flash",
+                        contents=f"{system_instruction}\n\nPertanyaan: {prompt}"
+                    )
+                    jawaban = response.text
+                    break
+                except Exception as e:
+                    if attempt < 2:
+                        time.sleep(2)
+                    else:
+                        st.error(f"Terjadi kendala saat memproses: {e}")
 
+            if jawaban:
+                st.write(jawaban)
                 audio_stream = teks_ke_suara(jawaban)
                 st.audio(audio_stream, format="audio/mp3", autoplay=True)
 
@@ -200,5 +223,3 @@ ATURAN:
                     "content": jawaban,
                     "audio": audio_stream
                 })
-            except Exception as e:
-                st.error(f"Koneksi AI mengalami kendala: {e}")
